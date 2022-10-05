@@ -29,8 +29,9 @@ class Phasor:
         self.imaginaryComponent = imaginaryComponent
         self.complexNotation = [self.realComponent, self.imaginaryComponent]
 
+        # UNIT DETECTION
         # U = ZI
-        if self.unit == "(Ohm)*(A)" or self.unit == "(A)*(Ohm)":
+        if self.unit == "(Ohm)*(A)" or unit == "(A)*(Ohm)":
             self.unit = "V"
         # I = U/Z
         if self.unit == "(V)/(Ohm)":

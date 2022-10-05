@@ -57,13 +57,15 @@ class EEToolkit:
         if not p1.frequency == p2.frequency and not (p1.isImpedance or p2.isImpedance):
             print("You can't multiply 2 phasors with different frequencies")
             return
+        if p1.isImpedance:  frequency = p2.frequency
+        else:   frequency = p1.frequency
 
         argument = p1.argument + p2.argument
         magnitude = p1.magnitude * p2.magnitude
 
         unit = f"({p1.unit})*({p2.unit})"    
 
-        p12 = Phasor.fromPolar(argument, magnitude, unit, p1.frequency)
+        p12 = Phasor.fromPolar(magnitude, argument, unit, frequency)
         return p12
 
     def dividePhasor(self, p1: Phasor, p2: Phasor) -> Optional[Phasor]:
@@ -72,6 +74,8 @@ class EEToolkit:
         if not p1.frequency == p2.frequency and not (p1.isImpedance or p2.isImpedance):
             print("You can't divide 2 phasors with different frequencies")
             return
+        if p1.isImpedance:  frequency = p2.frequency
+        else:   frequency = p1.frequency
 
         argument = p1.argument - p2.argument
         magnitude = p1.magnitude / p2.magnitude
@@ -80,13 +84,25 @@ class EEToolkit:
         else:
             unit = f"({p1.unit})/({p2.unit})"
 
-        p12 = Phasor.fromPolar(magnitude, argument, unit, p1.frequency)
+        p12 = Phasor.fromPolar(magnitude, argument, unit, frequency)
         return p12
 
     def ohmsLaw(self, p1, p2):
-        units = [p1.unit, p2.unit]
-        if units.con 
-        pass
+
+        phasors = {
+            p1.unit: p1,
+            p2.unit: p2,
+        }
+
+        # U = ZI
+        if ("Ohm" in phasors) and ("A" in phasors):
+            return self.multiplyPhasor(p1,p2)
+        # I = U/Z
+        if ("V" in phasors) and ("Ohm" in phasors):  
+            return self.dividePhasor(phasors["V"], phasors["Ohm"])
+        # Z = U/I
+        if ("V" in phasors) and ("A" in phasors):
+            return self.dividePhasor(phasors["V"] , phasors["A"])
 
     def activePower(self):
         pass
