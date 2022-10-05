@@ -3,12 +3,10 @@ from phasor import Phasor
 
 eet = EEToolkit()
 
-v1 = Phasor.fromComplex(30, 10, "V", 50)
-i1 = Phasor.fromPolar(25,45, "A", 50)
-z1 = Phasor.fromComplex(30, 20)
+v1 = Phasor.fromComplex(230, 0, "V", 50)
 
-print(v1.printString("complex"))
-print(v1.printString("polar"))
+z1 = Phasor.fromComplex(100, 0)
 
-print(i1.printString("complex"))
+i1 = eet.dividePhasor(v1,z1)
 print(i1.printString("polar"))
+

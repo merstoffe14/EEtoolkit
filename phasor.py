@@ -14,18 +14,33 @@ class Phasor:
         if frequency == None:   
             self.isImpedance = True   
             self.unit = "Ohm"
+            self.angularFrequency = None
+            self.period = None
         else:   
             self.isImpedance = False 
             self.unit = unit
+            self.angularFrequency = frequency*math.pi*2           
+            self.period = 1/frequency
         
+        self.frequency = frequency
         self.magnitude = magnitude
         self.argument = argument
         self.realComponent = realComponent
         self.imaginaryComponent = imaginaryComponent
-        self.frequency = frequency
-        self.angularFrequency = frequency*math.pi*2
-        self.period = 1/frequency
         self.complexNotation = [self.realComponent, self.imaginaryComponent]
+
+        # U = ZI
+        if self.unit == "(Ohm)*(A)" or self.unit == "(A)*(Ohm)":
+            self.unit = "V"
+        # I = U/Z
+        if self.unit == "(V)/(Ohm)":
+            self.unit = "A"
+        # Z = U/I
+        if self.unit == "(V)/(A)":
+            self.unit = "Ohm"
+    
+
+
 
 
     @classmethod
@@ -51,7 +66,7 @@ class Phasor:
             return string
 
         if notation == "polar":
-            string = f"{round(self.magnitude, 2)}∠{round(self.argument, 2)}º {self.unit}"
+            string = f"{round(self.magnitude, 2)}∠{round(self.argument, 2)}° {self.unit}"
             return string
         else:
             return "notation unknown"
