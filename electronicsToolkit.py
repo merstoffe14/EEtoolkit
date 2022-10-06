@@ -45,6 +45,7 @@ class EEToolkit:
             return
         if not p1.frequency == p2.frequency:
             print("You can't add 2 phasors with different frequencies")
+            return
 
         real = p1.realComponent - p2.realComponent
         imaginary = p1.imaginaryComponent - p2.imaginaryComponent
@@ -54,10 +55,12 @@ class EEToolkit:
     def multiplyPhasor(self, p1: Phasor, p2: Phasor) -> Optional[Phasor]:
         
         #MULTIPLYING TWO PHASORS WITH DIFFERENT FREQUENCY
-        if not p1.frequency == p2.frequency and not (p1.isImpedance or p2.isImpedance):
+        # if you are trying to multiply with an impedance, it ignores the frequency check
+        if not p1.frequency == p2.frequency and not (p1.isZY[0] or p2.isZY[0]):
             print("You can't multiply 2 phasors with different frequencies")
             return
-        if p1.isImpedance:  frequency = p2.frequency
+        #It sets the frequency of the new phasor to the frequency of the not-impedance value
+        if p1.isZY[0]:  frequency = p2.frequency
         else:   frequency = p1.frequency
 
         argument = p1.argument + p2.argument
@@ -71,10 +74,10 @@ class EEToolkit:
     def dividePhasor(self, p1: Phasor, p2: Phasor) -> Optional[Phasor]:
 
         #DIVIDING TWO PHASORS WITH DIFFERENT FREQUENCY
-        if not p1.frequency == p2.frequency and not (p1.isImpedance or p2.isImpedance):
+        if not p1.frequency == p2.frequency and not (p1.isZY[0] or p2.isZY[0]):
             print("You can't divide 2 phasors with different frequencies")
             return
-        if p1.isImpedance:  frequency = p2.frequency
+        if p1.isZY[0]:   frequency = p2.frequency
         else:   frequency = p1.frequency
 
         argument = p1.argument - p2.argument
@@ -87,7 +90,17 @@ class EEToolkit:
         p12 = Phasor.fromPolar(magnitude, argument, unit, frequency)
         return p12
 
-    def ohmsLaw(self, p1, p2):
+    def getAdmitanceFromZ(self, p1: Phasor) -> Phasor:
+        magnitude = 1/(p1.magnitude)
+        argument = -p1.argument
+        return Phasor.fromPolar(magnitude, argument, "S")
+
+    def getImpedanceFromY(self, p1: Phasor) -> Phasor:
+        magnitude = 1/(p1.magnitude)
+        argument = -p1.argument
+        return Phasor.fromPolar(magnitude, argument)
+
+    def ohmsLaw(self, p1, p2) -> Phasor:
 
         phasors = {
             p1.unit: p1,
@@ -104,6 +117,8 @@ class EEToolkit:
         if ("V" in phasors) and ("A" in phasors):
             return self.dividePhasor(phasors["V"] , phasors["A"])
 
+
+    # This can be one function that returns a dict.
     def activePower(self):
         pass
 
@@ -112,10 +127,20 @@ class EEToolkit:
 
     def apparentPower(self):
         pass
+    #---------------------------------------------
 
-    def calculateImpedance(self, R, L ,C , omega):
+    def calculateImpedance(self, R: float = 0, L: float = 0, C: float = 0 , frequency: float = 0) -> Phasor:
+        omega = math.pi * 2 * frequency
+        x_l = omega * L
+        x_c = 1/(omega*C)
+        x_t = x_c - x_l
+        return Phasor.fromComplex(R, x_t)
+
+    def series(values: list[Phasor]) -> Phasor:
         pass
 
+    def parallel(values: list[Phasor]) -> Phasor:
+        pass
     
 
 

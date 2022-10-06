@@ -8,16 +8,23 @@ class Phasor:
     #amplitude (A), angular frequency (ω), and initial phase (θ) are time-invariant.
 
     #Impedance values can also be saved in the form of phasors, altough they do not have an angular frequency
+    #Admitances as well, if no frequency is given, the program will asume it is an impedance
+    #If it has to be an admitance, you can leave out the frequency but will need to give the correct unit S
+    # I might remove this, to avoid confusion, and will make the unit argument not optional.
 
     def __init__(self, magnitude, argument, realComponent, imaginaryComponent, frequency=None, unit=None) -> None:
 
-        if frequency == None:   
-            self.isImpedance = True   
-            self.unit = "Ohm"
+        if frequency == None:
+            if unit == None or unit == "Ohm":  
+                self.unit = "Ohm"
+                self.isZY = [True, "Impedance"]
+            if unit == "S":
+                self.unit = "S"
+                self.isZY = [True, "Admitance"]
             self.angularFrequency = None
             self.period = None
         else:   
-            self.isImpedance = False 
+            self.isZY = [False, None] 
             self.unit = unit
             self.angularFrequency = frequency*math.pi*2           
             self.period = 1/frequency
@@ -29,16 +36,19 @@ class Phasor:
         self.imaginaryComponent = imaginaryComponent
         self.complexNotation = [self.realComponent, self.imaginaryComponent]
 
-        # UNIT DETECTION
+        # UNIT DETECTION, This can be done better, by making units an actual thing instead of strings
         # U = ZI
-        if self.unit == "(Ohm)*(A)" or unit == "(A)*(Ohm)":
+        if self.unit == "(Ohm)*(A)" or self.unit == "(A)*(Ohm)" or self.unit == "(A)/(S)" :
             self.unit = "V"
         # I = U/Z
-        if self.unit == "(V)/(Ohm)":
+        if self.unit == "(V)/(Ohm)" or self.unit == "(V)*(S)":
             self.unit = "A"
         # Z = U/I
         if self.unit == "(V)/(A)":
             self.unit = "Ohm"
+        # Y = I/U
+        if self.unit == "(A)/(V)":
+            self.unit = "S"
     
 
 
