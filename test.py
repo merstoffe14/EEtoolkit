@@ -1,32 +1,25 @@
 from cmath import phase
+from queue import Empty
+from tracemalloc import start
 from electronicsToolkit import EEToolkit
-from phasor import Phasor
+from eecomplex import EEComplex
 
 eet = EEToolkit()
 
-r1 = Phasor.fromComplex(100, 0, "Ohm")
-r2 = Phasor.fromComplex(101, 0, "Ohm")
-r3 = Phasor.fromComplex(100, 0, "Ohm")
+z1 = EEComplex.fromPolar(100,0,"Ohm")
+v1 = EEComplex.fromPolar(230,0,"V")
 
-v1 = Phasor.fromComplex(230, 0, "V")
-i1 = Phasor.fromComplex(2, 0, "A")
+i1 = v1/z1
 
-ohmcheck = eet.ohmsLaw(v1, r1)
-print(ohmcheck.printString("polar"))
+y1 = eet.getAdmitanceFromZ(z1)
 
-print(eet.parallel([r1,r2,r3]).printString("polar"))
 
-rs = [r1,r2,r3]
+print(i1)
+print(y1)
 
-rt = r1 / r2
 
-# Sum werkt nog ni door radd
-r4 = sum(rs)
+# check if number is prime 
 
-print(rt.printString("polar"))
-
-r_t = eet.parallel([r2,r1, r3])
-print(r_t.printString("polar"))
 
 
 
