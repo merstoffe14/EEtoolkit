@@ -1,24 +1,20 @@
-from cmath import phase
-from queue import Empty
-from tracemalloc import start
 from electronicsToolkit import EEToolkit
 from eecomplex import EEComplex
 
 eet = EEToolkit()
 
 z1 = EEComplex.fromPolar(100,0,"Ohm")
+z2 = EEComplex.fromPolar(50,0,"Ohm")
+z3 = EEComplex.fromPolar(25,0,"Ohm")
+
 v1 = EEComplex.fromPolar(230,0,"V")
+v2 = EEComplex.fromPolar(230,0,"V")
 
-i1 = v1/z1
+print(eet.parallelImpedance([z1,z2,z3]))
 
-y1 = eet.getAdmitanceFromZ(z1)
-
-
-print(i1)
-print(y1)
+eet.drawPhasor(v1)
 
 
-# check if number is prime 
 
 
 

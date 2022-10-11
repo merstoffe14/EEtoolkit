@@ -4,12 +4,10 @@ import cmath
 from math import radians
 from mimetypes import init
 from multiprocessing.sharedctypes import Value
-from queue import Empty
-from typing import Optional
-import numpy as np
 import matplotlib.pyplot as plt
-import pint
-from enum import Enum
+
+import matplotlib.pyplot as plt
+import numpy as np
 
 from eecomplex import EEComplex
 
@@ -46,28 +44,23 @@ class EEToolkit:
             raise ValueError("Y must be an admitance!")
         magnitude = 1/(y.getMagnitude())
         argument = -y.getArgument()
-        return EEComplex.fromPolar(magnitude, argument, "ohm")
+        return EEComplex.fromPolar(magnitude, argument, "Ohm")
 
-    # def ohmsLaw(self, p1, p2) -> Phasor:
+    def ohmsLaw(self, U: EEComplex= None, I: EEComplex = None, Z: EEComplex = None) -> EEComplex:
+        # Check for unit errors maybe?
+        if U and I:
+            return U/I
+        elif U and Z:
+            return U/Z
+        elif I and Z:
+            return I*Z
+        else:
+            raise ValueError("You must provide 2 out of 3 variables")
+        
 
-    #     # I can avoid using this dict by calling the function with ohmsLaw(x = .., y = ..) and  then working with default values.
-    #     phasors = {
-    #         p1.unit: p1,
-    #         p2.unit: p2,
-    #     }
-
-    #     # U = ZI
-    #     if ("Ohm" in phasors) and ("A" in phasors):
-    #         return p1 * p2
-    #     # I = U/Z
-    #     if ("V" in phasors) and ("Ohm" in phasors):  
-    #         return phasors["V"] / phasors["Ohm"]
-    #     # Z = U/I
-    #     if ("V" in phasors) and ("A" in phasors):
-    #         return phasors["V"] / phasors["A"]
-
-
+    
     # # This can be one function that returns a dict.
+    # I can make a class for this, but I don't know if it is worth it.
     # def activePower(self):
     #     pass
 
@@ -78,23 +71,26 @@ class EEToolkit:
     #     pass
     # #---------------------------------------------
 
-    # def calculateImpedance(self, R: float = 0, L: float = 0, C: float = 0 , frequency: float = 0) -> Phasor:
-    #     omega = math.pi * 2 * frequency
-    #     x_l = omega * L
-    #     x_c = 1/(omega*C)
-    #     x_t = x_c - x_l
-    #     return Phasor.fromComplex(R, x_t)
+    def calculateImpedance(self, R: float = 0, L: float = 0, C: float = 0 , frequency: float = 0) -> EEComplex:
+        omega = math.pi * 2 * frequency
+        x_l = omega * L
+        x_c = 1/(omega*C)
+        x_t = x_c - x_l
+        return EEComplex.fromComplex(R, x_t, "Ohm")
 
 
-    # # Series of voltage and current sources?
-    # def series(self, values: list[Phasor]) -> Phasor:
-    #     return sum(values)
+    # Series of voltage and current sources?
+    def seriesImpedance(self, values: list[EEComplex]) -> EEComplex:
+        return sum(values)
 
-    # # parallel of voltage and current sources?
-    # def parallel(self, values: list[Phasor]) -> Phasor:
-    #     y = []
-    #     for p in values:
-    #         y.append(Phasor.getAdmitanceFromZ(p))
+    # parallel of voltage and current sources?
+    def parallelImpedance(self, values: list[EEComplex]) -> EEComplex:
+        y = []
+        for p in values:
+            y.append(self.getAdmitanceFromZ(p))
 
-    #     return Phasor.getImpedanceFromY(sum(y))
+        return self.getImpedanceFromY(sum(y))
 
+    # Time in ms
+    def drawScopeView(self, phasors: list[EEComplex], time: int = 100):
+        pass

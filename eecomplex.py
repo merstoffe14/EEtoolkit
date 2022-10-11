@@ -11,8 +11,6 @@ class EEComplex:
     # Admitances as well
 
     # To capture all of these in 1 simple object, we use the EEComplex.
-    # You don't have to give a frequency, because in normal calculations, all of the phasors frequencys should be the same
-    # It is the task of the end user to be consistent with frequency when calculating impedances using the RLC formula.
     # It is recomended to define a "Global" frequency variable, and set it at the top of your worksheet.
 
 
