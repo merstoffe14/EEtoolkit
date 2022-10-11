@@ -3,22 +3,24 @@ from math import radians, degrees
 
 class EEComplex:
 
-    # In physics and engineering, a phasor (a portmanteau of phase vector)
-    # is a complex number representing a sinusoidal function whose
-    # amplitude (A), angular frequency (ω), and initial phase (θ) are time-invariant.
+    ''' 
+    In physics and engineering, a phasor (a portmanteau of phase vector)
+    is a complex number representing a sinusoidal function whose
+    amplitude (A), angular frequency (ω), and initial phase (θ) are time-invariant.
 
-    # Impedance values can also be saved in the form of phasors, altough they do not have an angular frequency
-    # Admitances as well
+    Impedance values can also be saved in the form of phasors, altough they do not have an angular frequency
+    Admitances as well
 
-    # To capture all of these in 1 simple object, we use the EEComplex.
-    # It is recomended to define a "Global" frequency variable, and set it at the top of your worksheet.
-
-
+    To capture all of these in 1 simple object, we use the EEComplex.
+    
+    '''
+    
     def __init__(self, complexNumber: complex, units: list[list[str],list[str]], frequency: float = None) -> None:
         
         self.units = units
         self.complex = complexNumber
         self.frequency = frequency
+        self.roundTo = 2
 
         self.eecomplexChecker()
         self.unitChecker()
@@ -90,8 +92,7 @@ class EEComplex:
             nominator.append("Ohm")
         # V = A/S, A = V/S, S = V/A
         # Might add more later
-
-        
+  
     def getRealComponent(self):
         return self.complex.real  
 
@@ -103,6 +104,14 @@ class EEComplex:
 
     def getArgument(self):
         return degrees(math.atan(self.getImaginaryComponent()/self.getRealComponent()))
+
+
+    # Is this neccecary? I can check the unit using [nominator,denominator]
+    def unitCheck(self, unitToCheck: str) -> bool:
+        if not (self.units[0].count(unitToCheck) and len(self.units[0]) == 1) and not self.units[1]:
+            return False
+        else:
+            return True
 
     def __str__(self):
         nominatorString = ""
@@ -118,9 +127,8 @@ class EEComplex:
             unitsstring =  "1/" + denominatorString
         else:
             unitsstring = nominatorString + "/" + denominatorString
-        
-
-        return f"{self.getRealComponent()} + j{self.getImaginaryComponent()} {unitsstring} | {self.getMagnitude()}∠{self.getArgument()}° {unitsstring}"
+             
+        return f"{round(self.getRealComponent(),self.roundTo)} + j{round(self.getImaginaryComponent(),self.roundTo)} {unitsstring} | {round(self.getMagnitude(), self.roundTo)}∠{round(self.getArgument(),self.roundTo)}° {unitsstring}"
 
     def __add__(self, other: "EEComplex") -> "EEComplex":
 

@@ -32,7 +32,7 @@ class EEToolkit:
 
     def getAdmitanceFromZ(self, z: EEComplex) -> EEComplex: 
         #check if z is an impedance 
-        if not (z.units[0].count("Ohm") and len(z.units[0]) == 1) and not z.units[1]:
+        if not z.unitCheck("Ohm"):
             raise ValueError("Z must be an impedance!")
         magnitude = 1/(z.getMagnitude())
         argument = -z.getArgument()
@@ -40,7 +40,7 @@ class EEToolkit:
 
     def getImpedanceFromY(self, y: EEComplex) -> EEComplex:
         #check if y is an admitance
-        if not (y.units[0].count("S") and len(y.units[0]) == 1) and not y.units[1]:
+        if not y.unitCheck("S"):
             raise ValueError("Y must be an admitance!")
         magnitude = 1/(y.getMagnitude())
         argument = -y.getArgument()
@@ -92,5 +92,20 @@ class EEToolkit:
         return self.getImpedanceFromY(sum(y))
 
     # Time in ms
-    def drawScopeView(self, phasors: list[EEComplex], time: int = 100):
-        pass
+    def drawScopeView(self, phasors: list[EEComplex], time: int = 100, sampleRate: int = 1000):
+        x = np.linspace(0, time/1000, 1000)
+        for p in phasors:
+            #Check if phasor has a unit of V or A
+            if not p.unitCheck("V") and not p.unitCheck("A"):
+                raise ValueError("Phasor must be a voltage or current source!")
+            else:
+                # Multiplied by a factor of sqrt(2), to convert from RMS to peak, since phasors are always pure sinusoidal waves
+                y = np.sqrt(2) * p.getMagnitude() * np.sin(2 * np.pi * p.frequency * x + radians(p.getArgument()))
+                plt.plot(x,y)
+      
+        plt.xlabel('Time (s)')
+        plt.ylabel('Voltage (V)/ Current (A)')
+        plt.title('Scope View')
+        # add function labels
+        
+        plt.show()
